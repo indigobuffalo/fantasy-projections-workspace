@@ -1,0 +1,122 @@
+services:
+  # PostgreSQL database
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: fantasy_draft
+      POSTGRES_USER: fantasy_user
+      POSTGRES_PASSWORD: fantasy_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./fantasy-projections-api/database/schema:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fantasy_user -d fantasy_draft"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - fantasy-network
+
+  # Redis cache
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+    networks:
+      - fantasy-network
+
+  # Fantasy Projections API (Backend)
+  api:
+    build: 
+      context: ./fantasy-projections-api
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://fantasy_user:fantasy_pass@postgres:5432/fantasy_draft
+      REDIS_URL: redis://redis:6379/0
+      ENVIRONMENT: development
+      PYTHONPATH: /app/src
+      JWT_SECRET_KEY: "dev-secret-key-that-should-be-changed-in-production-12345678901234567890"
+      CORS_ORIGINS: "http://localhost:3000,http://web:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./fantasy-projections-api/data:/app/data:ro
+      - ./fantasy-projections-api/src:/app/src
+    command: uvicorn fantasy_projections.api.main:app --host 0.0.0.0 --port 8000 --reload
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/api/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - fantasy-network
+
+  # Fantasy Projections Web (Frontend)
+  web:
+    build:
+      context: ./fantasy-projections-web
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+      API_URL: http://api:8000
+      NODE_ENV: development
+    depends_on:
+      api:
+        condition: service_healthy
+    volumes:
+      - ./fantasy-projections-web/src:/app/src
+      - ./fantasy-projections-web/public:/app/public
+      - ./fantasy-projections-web/package.json:/app/package.json
+    # Override for development with hot reload
+    command: ["sh", "-c", "npm install && npm run dev"]
+    networks:
+      - fantasy-network
+
+  # CLI container for running commands (optional)
+  cli:
+    build:
+      context: ./fantasy-projections-api
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql://fantasy_user:fantasy_pass@postgres:5432/fantasy_draft
+      REDIS_URL: redis://redis:6379/0
+      PYTHONPATH: /app/src
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./fantasy-projections-api/data:/app/data:ro
+      - ./fantasy-projections-api/src:/app/src
+      - ./fantasy-projections-api/output:/app/output
+    command: ["tail", "-f", "/dev/null"]  # Keep container running
+    profiles: ["cli"]  # Only start with --profile cli
+    networks:
+      - fantasy-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  fantasy-network:
+    driver: bridge

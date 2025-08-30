@@ -1,0 +1,6 @@
+[submodule "fantasy-projections-api"]
+	path = fantasy-projections-api
+	url = https://github.com/indigobuffalo/fantasy-projections-api.git
+[submodule "fantasy-projections-web"]
+	path = fantasy-projections-web
+	url = https://github.com/indigobuffalo/fantasy-projections-web

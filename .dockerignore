@@ -1,0 +1,66 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Documentation
+README.md
+*.md
+docs/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+
+# Environment files
+.env.local
+.env.*.local
+
+# Node modules (handled by individual Dockerfiles)
+**/node_modules/
+
+# Python cache (handled by individual Dockerfiles)
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+**/.Python
+**/env/
+**/venv/
+**/.venv/
+**/.pytest_cache/
+**/.ruff_cache/
+
+# Build outputs
+**/build/
+**/dist/
+**/.next/
+
+# Development databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Coverage reports
+coverage/
+**/.coverage
+**/htmlcov/
+
+# Package files
+**/*.egg-info/
+**/pip-wheel-metadata/
