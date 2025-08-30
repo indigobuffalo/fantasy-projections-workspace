@@ -4,9 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Structure
 
-This is a fantasy hockey projection workspace containing two main applications:
-- **fantasy-projections-api/**: Python CLI application for comparing fantasy hockey projections
-- **fantasy-projections-web/**: Next.js web application (under development)
+This is a fantasy hockey projection workspace containing two git submodules:
+- **fantasy-projections-api/**: Git submodule containing Python CLI application for comparing fantasy hockey projections
+- **fantasy-projections-web/**: Git submodule containing Next.js web application (under development)
+
+Each submodule has its own git repository and history. Use standard git submodule commands when working with them.
 
 ## Common Commands
 
