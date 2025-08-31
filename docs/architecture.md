@@ -2585,7 +2585,7 @@ class FileProcessingJob:
         """Parse Excel file and extract player projections."""
         import io
         
-        # Use existing reader classes from the CLI codebase
+        # Use existing reader classes from the backend codebase
         # This maintains consistency with current functionality
         df = pd.read_excel(io.BytesIO(file_data))
         

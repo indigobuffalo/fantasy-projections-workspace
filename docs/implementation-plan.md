@@ -38,7 +38,7 @@ This document outlines a step-by-step plan for building the Fantasy Hockey Draft
 ---
 
 ## Iteration 1: Backend API Foundation + Database Setup
-*Goal: Transform existing CLI into REST API with core endpoints and database infrastructure*
+*Goal: Create REST API with core endpoints and database infrastructure*
 
 ### Backend Tasks (Current Repo)
 - [ ] **1. Database Infrastructure Setup**
@@ -159,14 +159,14 @@ This document outlines a step-by-step plan for building the Fantasy Hockey Draft
 
 ### Testing
 - [ ] Test all endpoints with curl/Postman
-- [ ] Verify data matches existing CLI output
+- [ ] Verify data processing matches expected output
 - [ ] Test database connections and data persistence
 - [ ] Test CORS for frontend development
 - [ ] Verify caching layer functionality
 - [ ] Basic health endpoint testing
 
 ### Deliverable
-- [ ] Working REST API with database persistence that returns the same data as current CLI tool
+- [ ] Working REST API with database persistence for fantasy projection data
 
 ---
 
