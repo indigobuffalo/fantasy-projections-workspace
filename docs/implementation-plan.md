@@ -7,15 +7,18 @@ This document outlines a step-by-step plan for building the Fantasy Hockey Draft
 **Architecture**: Next.js 14 + React frontend consuming Python FastAPI REST endpoints  
 **Backend Repository**: Current repo (`fantasy-projections-api/`)  
 **Frontend Repository**: Current repo (`fantasy-projections-web/`)  
-**Timeline**: 5-6 weeks (8 iterations)  
+**Timeline**: 8 iterations  
 **Deployment**: Vercel (frontend) + Railway/Render (backend)
 **Database Strategy**: Simplified approach using PostgreSQL with JSONB (relational + flexible documents), Redis (cache)
 
 ## 📊 Progress Status
 
 ### Backend Development
-- 🔄 **Iteration 1**: Backend API Foundation + Database Setup - **PENDING**
-- 🔄 **Iteration 3**: File Upload + Processing - **PENDING**
+- ✅ **Iteration 0**: Docker Infrastructure & Testing Foundation - **COMPLETED**
+- ✅ **Iteration 1**: Database Infrastructure & API Foundation - **COMPLETED**
+- ✅ **Iteration 2**: File Upload & Background Processing - **COMPLETED**
+- ✅ **Iteration 3**: Dynamic Rankings & Weight Updates - **COMPLETED**
+- 🔄 **Iteration 3.5**: Authentication & User Management - **PENDING**
 - 🔄 **Iteration 4**: Draft Session Management - **PENDING**
 - 🔄 **Iteration 5**: Advanced Draft Features - **PENDING**
 - 🔄 **Iteration 6**: Analytics Dashboard & Performance Monitoring - **PENDING**
@@ -24,6 +27,7 @@ This document outlines a step-by-step plan for building the Fantasy Hockey Draft
 
 ### Frontend Development
 - ✅ **Iteration 1**: Project Setup & Foundation - **COMPLETED** 
+- 🔄 **Iteration 1.5**: Authentication & User Management - **PENDING**
 - 🔄 **Iteration 2**: Core UI Components & Data Display - **PENDING**
 - 🔄 **Iteration 3**: File Upload Interface - **PENDING**
 - 🔄 **Iteration 4**: Draft Status Management - **PENDING**
@@ -33,7 +37,7 @@ This document outlines a step-by-step plan for building the Fantasy Hockey Draft
 
 ---
 
-## Iteration 1: Backend API Foundation + Database Setup (Week 1)
+## Iteration 1: Backend API Foundation + Database Setup
 *Goal: Transform existing CLI into REST API with core endpoints and database infrastructure*
 
 ### Backend Tasks (Current Repo)
@@ -166,7 +170,116 @@ This document outlines a step-by-step plan for building the Fantasy Hockey Draft
 
 ---
 
-## Iteration 2: Frontend Foundation & Basic Display (Week 1-2)
+## Iteration 1.5: Authentication & User Management
+*Goal: Implement secure user authentication system for both frontend and backend*
+
+### Backend Authentication Tasks
+- [ ] **1. JWT Authentication System**
+   - Install authentication dependencies (passlib, python-jose, python-multipart)
+   - Implement JWT token creation, validation, and refresh logic
+   - Create secure password hashing with bcrypt
+   - Set up token-based session management with Redis
+
+- [ ] **2. User Database Schema**
+   ```sql
+   CREATE TABLE users (
+       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+       email VARCHAR(255) UNIQUE NOT NULL,
+       password_hash VARCHAR(255) NOT NULL,
+       name VARCHAR(255),
+       tier VARCHAR(50) DEFAULT 'free' CHECK (tier IN ('free', 'premium', 'admin')),
+       email_verified BOOLEAN DEFAULT FALSE,
+       created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+       is_active BOOLEAN DEFAULT TRUE,
+       preferences JSONB DEFAULT '{}'::jsonb
+   );
+
+   CREATE TABLE user_sessions (
+       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+       user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+       refresh_token_hash VARCHAR(255) NOT NULL,
+       expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
+       created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+   );
+
+   -- Update draft_sessions table to associate with users
+   ALTER TABLE draft_sessions ADD COLUMN user_id UUID REFERENCES users(id) ON DELETE CASCADE;
+   ```
+
+- [ ] **3. Authentication API Endpoints**
+   ```python
+   POST /api/auth/register     # User registration with email/password
+   POST /api/auth/login        # User login returning JWT tokens
+   POST /api/auth/refresh      # Refresh access token using refresh token
+   POST /api/auth/logout       # Invalidate user session
+   GET  /api/auth/me          # Get current user profile
+   ```
+
+- [ ] **4. Protected API Routes**
+   - Add authentication middleware to all existing endpoints
+   - Implement user authorization checks for draft session access
+   - Add rate limiting with stricter limits on auth endpoints
+   - Update existing endpoints to associate data with authenticated users
+
+### Frontend Authentication Tasks
+- [ ] **5. Authentication Components**
+   ```typescript
+   // Authentication UI components
+   - LoginForm: Email/password login with validation
+   - RegisterForm: Account creation with password strength validation
+   - AuthModal: Modal wrapper for login/register forms
+   - UserMenu: User avatar, settings, logout dropdown
+   - ProtectedRoute: Route guard component for authenticated pages
+   ```
+
+- [ ] **6. Authentication State Management**
+   ```typescript
+   // Authentication context and hooks
+   - useAuth(): JWT token management with auto-refresh
+   - AuthProvider: Global authentication context provider
+   - API client integration with Bearer token headers
+   - Persistent session management with secure token storage
+   ```
+
+- [ ] **7. Navigation & Route Protection**
+   - Update header navigation with user authentication status
+   - Implement Next.js middleware for route protection
+   - Add user profile and account settings pages
+   - Show/hide features based on user tier (free/premium)
+
+- [ ] **8. User-Associated Data**
+   - Update draft session creation to associate with authenticated user
+   - Add user dashboard showing personal draft sessions
+   - Implement draft session sharing (public/private visibility)
+   - Add user preferences and settings management
+
+### Security & Accessibility
+- [ ] **9. Security Implementation**
+   - Rate limiting: 5 registrations/hour, 10 logins/minute per IP
+   - Input validation for email/password with proper error messages
+   - CSRF protection and secure token storage
+   - Session timeout and automatic token refresh
+
+- [ ] **10. Authentication Accessibility**
+   - Accessible form components with proper ARIA labels
+   - Screen reader announcements for auth state changes
+   - Keyboard navigation for modals and form elements
+   - High contrast support for authentication UI
+
+### Testing
+- [ ] Test user registration and login flows end-to-end
+- [ ] Verify JWT token creation, validation, and refresh mechanisms
+- [ ] Test protected route access and unauthorized redirects
+- [ ] Validate rate limiting and security measures
+- [ ] Test accessibility with screen readers and keyboard navigation
+- [ ] Verify user data association and session management
+
+### Deliverable
+- [ ] Complete authentication system enabling secure user accounts, login/logout, and user-associated data across both frontend and backend
+
+---
+
+## Iteration 2: Frontend Foundation & Basic Display
 *Goal: Create Next.js app with basic data display from API*
 
 ### ✅ Frontend Tasks (Completed in fantasy-projections-web/)
@@ -270,7 +383,7 @@ Working Next.js app displaying projection data from API
 
 ---
 
-## Iteration 3: File Upload & Processing (Week 2)
+## Iteration 3: File Upload & Processing
 *Goal: Enable file upload with rule-based processing and player name validation*
 
 ### Backend Tasks
@@ -394,7 +507,7 @@ High-performance file upload system with background processing, real-time status
 
 ---
 
-## Iteration 4: Source Weighting System (Week 2-3)
+## Iteration 4: Source Weighting System
 *Goal: Interactive source weighting with polling-based ranking updates*
 
 ### Backend Tasks
@@ -512,7 +625,7 @@ High-performance interactive source weighting system with optimized background c
 
 ---
 
-## Iteration 5: Draft Status Management Foundation (Week 3)
+## Iteration 5: Draft Status Management Foundation
 *Goal: Basic drafted icon system with player status management*
 
 ### Frontend Tasks
@@ -615,7 +728,7 @@ Basic drafted icon system with simplified team tracking and database persistence
 
 ---
 
-## Iteration 6: Advanced Draft Features (Week 4)
+## Iteration 6: Advanced Draft Features
 *Goal: Sleeper management, team balance analysis, and draft recommendations*
 
 ### Frontend Tasks
@@ -689,7 +802,7 @@ Advanced draft features with sleeper management, team analysis, and simplified d
 
 ---
 
-## Iteration 7: Analytics Dashboard & Monitoring (Week 4-5)
+## Iteration 7: Analytics Dashboard & Monitoring
 *Goal: Comprehensive analytics dashboard and monitoring infrastructure*
 
 ### Backend Tasks
@@ -763,7 +876,7 @@ Comprehensive analytics and monitoring system with polling-based dashboards
 
 ---
 
-## Iteration 8: Polish, Testing & Deployment (Week 5-6)
+## Iteration 8: Polish, Testing & Deployment
 *Goal: Production-ready application with deployment*
 
 ### Frontend Tasks
