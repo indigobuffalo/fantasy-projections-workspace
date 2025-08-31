@@ -129,3 +129,10 @@ Write modular code that promotes:
 
 ## Project Evolution
 Changes are tracked in `fantasy-projections-api/CHANGELOG.md`, updated before merging pull requests to document all integrated changes.
+
+**Implementation Plan Maintenance**: When making commits to `fantasy-projections-api/` or `fantasy-projections-web/`, always update the corresponding implementation plans to reflect current project states:
+- `docs/implementation-plan.md` - Overall project status and coordination
+- `fantasy-projections-api/docs/implementation-plan.md` - Backend progress and completed iterations
+- `fantasy-projections-web/docs/implementation-plan.md` - Frontend progress and completed iterations
+
+Mark completed tasks as `[x]` and update progress status indicators (`✅ COMPLETED`, `🟡 IN PROGRESS`, `🔄 PENDING`) to maintain accurate project tracking.
