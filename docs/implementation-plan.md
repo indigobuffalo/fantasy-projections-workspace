@@ -7,7 +7,7 @@ This document outlines a step-by-step plan for building the Fantasy Hockey Draft
 **Architecture**: Next.js 14 + React frontend consuming Python FastAPI REST endpoints  
 **Backend Repository**: Current repo (`fantasy-projections-api/`)  
 **Frontend Repository**: Current repo (`fantasy-projections-web/`)  
-**Timeline**: 5-6 weeks (8 iterations)  
+**Timeline**: 8 iterations  
 **Deployment**: Vercel (frontend) + Railway/Render (backend)
 **Database Strategy**: Simplified approach using PostgreSQL with JSONB (relational + flexible documents), Redis (cache)
 
@@ -37,7 +37,7 @@ This document outlines a step-by-step plan for building the Fantasy Hockey Draft
 
 ---
 
-## Iteration 1: Backend API Foundation + Database Setup (Week 1)
+## Iteration 1: Backend API Foundation + Database Setup
 *Goal: Transform existing CLI into REST API with core endpoints and database infrastructure*
 
 ### Backend Tasks (Current Repo)
@@ -170,7 +170,7 @@ This document outlines a step-by-step plan for building the Fantasy Hockey Draft
 
 ---
 
-## Iteration 1.5: Authentication & User Management (Week 1-2)
+## Iteration 1.5: Authentication & User Management
 *Goal: Implement secure user authentication system for both frontend and backend*
 
 ### Backend Authentication Tasks
@@ -279,7 +279,7 @@ This document outlines a step-by-step plan for building the Fantasy Hockey Draft
 
 ---
 
-## Iteration 2: Frontend Foundation & Basic Display (Week 1-2)
+## Iteration 2: Frontend Foundation & Basic Display
 *Goal: Create Next.js app with basic data display from API*
 
 ### ✅ Frontend Tasks (Completed in fantasy-projections-web/)
@@ -383,7 +383,7 @@ Working Next.js app displaying projection data from API
 
 ---
 
-## Iteration 3: File Upload & Processing (Week 2)
+## Iteration 3: File Upload & Processing
 *Goal: Enable file upload with rule-based processing and player name validation*
 
 ### Backend Tasks
@@ -507,7 +507,7 @@ High-performance file upload system with background processing, real-time status
 
 ---
 
-## Iteration 4: Source Weighting System (Week 2-3)
+## Iteration 4: Source Weighting System
 *Goal: Interactive source weighting with polling-based ranking updates*
 
 ### Backend Tasks
@@ -625,7 +625,7 @@ High-performance interactive source weighting system with optimized background c
 
 ---
 
-## Iteration 5: Draft Status Management Foundation (Week 3)
+## Iteration 5: Draft Status Management Foundation
 *Goal: Basic drafted icon system with player status management*
 
 ### Frontend Tasks
@@ -728,7 +728,7 @@ Basic drafted icon system with simplified team tracking and database persistence
 
 ---
 
-## Iteration 6: Advanced Draft Features (Week 4)
+## Iteration 6: Advanced Draft Features
 *Goal: Sleeper management, team balance analysis, and draft recommendations*
 
 ### Frontend Tasks
@@ -802,7 +802,7 @@ Advanced draft features with sleeper management, team analysis, and simplified d
 
 ---
 
-## Iteration 7: Analytics Dashboard & Monitoring (Week 4-5)
+## Iteration 7: Analytics Dashboard & Monitoring
 *Goal: Comprehensive analytics dashboard and monitoring infrastructure*
 
 ### Backend Tasks
@@ -876,7 +876,7 @@ Comprehensive analytics and monitoring system with polling-based dashboards
 
 ---
 
-## Iteration 8: Polish, Testing & Deployment (Week 5-6)
+## Iteration 8: Polish, Testing & Deployment
 *Goal: Production-ready application with deployment*
 
 ### Frontend Tasks
