@@ -5,8 +5,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Project Structure
 
 This is a fantasy hockey projection workspace containing two git submodules:
-- **fantasy-projections-api/**: Git submodule containing Python CLI application for comparing fantasy hockey projections
-- **fantasy-projections-web/**: Git submodule containing Next.js web application (under development)
+- **fantasy-projections-api/**: Git submodule containing Python FastAPI backend for fantasy hockey projections
+- **fantasy-projections-web/**: Git submodule containing Next.js web application frontend
 
 Each submodule has its own git repository and history. Use standard git submodule commands when working with them.
 
@@ -22,8 +22,8 @@ Navigate to `fantasy-projections-api/` directory for all Python commands.
 - Run with uv (alternative): `uv run python <command>`
 
 #### Main Usage
-- Primary CLI: `python cli.py <league> <season> [options]`
-- Example: `python cli.py kkupfl 2024-2025 --position SKT --limit 10 --average`
+- Start API server: `uvicorn fantasy_projections.api.main:app --reload`
+- API endpoints: http://localhost:8000/docs (FastAPI documentation)
 - Available leagues: `kkupfl`, `pa`
 - Available seasons: `2024-2025`, `2023-2024`
 
@@ -54,25 +54,26 @@ Navigate to `fantasy-projections-web/` directory for all web commands.
 ### Fantasy Projections API
 The Python application follows a layered architecture:
 
-1. **CLI Layer** (`cli.py`): Argument parsing and user interaction
+1. **API Layer** (`api/`): FastAPI endpoints with validation and documentation
 2. **Controller Layer** (`controller/`): Request orchestration
 3. **Service Layer** (`service/`): Business logic for ranking calculations and data aggregation
 4. **Data Access Layer** (`dao/reader/`): Specialized parsers for different projection sources
 
 #### Key Components
-- **ProjectionsController**: Main orchestrator handling user requests
-- **ProjectionsSvc**: Core business logic for cross-source projection comparison
+- **FastAPI Application**: REST API server with OpenAPI documentation
+- **ProjectionsController**: Main orchestrator handling API requests
+- **ProjectionsSvc**: Core business logic for cross-source projection comparison  
 - **Reader Classes**: Specialized parsers in `dao/reader/` for different analysts (Blake, Dom, EP, Laidlaw, etc.)
 - **Average Rankings**: Weighted consensus rankings across all projection sources
 
 #### Data Flow
-1. CLI parses user arguments (league, season, filters, average flag)
+1. API receives HTTP requests with query parameters (league, season, filters, average flag)
 2. Controller validates inputs and creates service instance
 3. Service coordinates multiple readers to fetch projection data from Excel files
 4. Readers parse and normalize data from different sources
 5. Service aggregates and ranks players across all sources
-6. If `--average` flag enabled, calculates weighted average rankings
-7. Results flow back through controller to CLI for display
+6. If `include_average=true` parameter, calculates weighted average rankings
+7. Results returned as JSON through REST API endpoints
 
 #### Data Sources
 The application compares projections from multiple fantasy hockey analysts:
@@ -100,7 +101,7 @@ Next.js 14 application with TypeScript and Tailwind CSS, designed to consume RES
 The Python application includes sophisticated cross-source averaging:
 
 ### Usage
-Enable with `--average` flag: `python cli.py kkupfl 2024-2025 --average --limit 5`
+Enable with `include_average=true` parameter: `GET /api/rankings/kkupfl/2024-2025?include_average=true&limit=5`
 
 ### Implementation
 - Each reader has configurable weight for reliability
@@ -117,8 +118,8 @@ Enable with `--average` flag: `python cli.py kkupfl 2024-2025 --average --limit 
 - **Backend Architecture**: `fantasy-projections-api/docs/architecture.md` - Python FastAPI backend, data processing, and API endpoints
 
 ### User Experience
-- **User Specification**: `docs/fantasy-draft-assistant-user-specification.md` - Complete user experience, workflows, and feature requirements for both web and CLI interfaces
-  - THIS IS VERY IMPORANT. KEEP THIS FILE IN MIND WHEN REASONING ABOUT APP CHANGES, AS IT INSTRUCTS WHAT THE USER EXPERIENCE SHOULD BE.
+- **User Specification**: `docs/fantasy-draft-assistant-user-specification.md` - Complete user experience, workflows, and feature requirements for web interface
+  - THIS IS VERY IMPORTANT. KEEP THIS FILE IN MIND WHEN REASONING ABOUT APP CHANGES, AS IT INSTRUCTS WHAT THE USER EXPERIENCE SHOULD BE.
 
 ## Development Principles
 
