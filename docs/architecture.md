@@ -2,7 +2,7 @@
 
 ## System Overview
 
-The Fantasy Hockey Draft Day Assistant is built using a modern web architecture with Next.js + React frontend consuming Python FastAPI REST endpoints. The system supports both the existing CLI interface and the new web application interface using the same underlying business logic.
+The Fantasy Hockey Draft Day Assistant is built using a modern web architecture with Next.js + React frontend consuming Python FastAPI REST endpoints.
 
 ## High-Level Architecture
 
@@ -42,7 +42,7 @@ The Fantasy Hockey Draft Day Assistant is built using a modern web architecture 
 │  │ events/metrics  │  │ monitoring      │  │ dashboard       │ │
 │  └─────────────────┘  └─────────────────┘  └─────────────────┘ │
 ├─────────────────────────────────────────────────────────────────┤
-│  Existing Business Logic (Shared with CLI) + Analytics         │
+│  Business Logic + Analytics                                    │
 │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐ │
 │  │  Controller     │  │    Service      │  │      DAO        │ │
 │  │  Layer          │  │    Layer        │  │    Readers      │ │
@@ -91,7 +91,6 @@ The system maintains a clear separation of concerns through layered architecture
 
 **Components:**
 - **Web Interface**: Next.js 14 + React with responsive design
-- **CLI Interface**: Existing cli.py for command-line usage
 - **REST API**: FastAPI endpoints for web frontend consumption
 
 ### 2. Controller Layer
@@ -3469,82 +3468,6 @@ class OptimizedDatabaseManager:
 
 This comprehensive performance scaling architecture provides background job processing, advanced caching strategies, performance monitoring, and database optimization to handle high-traffic fantasy draft scenarios efficiently.
 
-## CLI to Web Migration Strategy
-
-### Current CLI Commands → Web Endpoints Mapping
-
-The existing CLI functionality will be fully preserved while adding web access. Here's how CLI commands map to web endpoints:
-
-| **CLI Command** | **Web Endpoint** | **Description** |
-|-----------------|------------------|-----------------|
-| `python cli.py kkupfl 2024-2025` | `GET /api/rankings?league=kkupfl&season=2024-2025` | Base rankings for league/season |
-| `--position SKT` | `GET /api/rankings?positions=SKT` | Filter by position (goalkeeper) |
-| `--limit 10` | `GET /api/rankings?limit=10` | Limit results count |
-| `--average` | `GET /api/rankings?average=true` | Enable cross-source averaging |
-| `--include "Connor.*McDavid"` | `GET /api/rankings?include=Connor.*McDavid` | Include regex pattern |
-| `--exclude "injured_players"` | `GET /api/rankings?exclude=injured_players` | Exclude regex pattern |
-
-### Migration Implementation Plan
-
-**Phase 1: Dual Interface Support**
-```python
-# Enhanced controller supports both CLI and web
-class ProjectionsController:
-    def get_rankings(self, request: RankingsRequest) -> RankingsResponse:
-        # Same business logic used by CLI and web
-        # request can be from argparse (CLI) or FastAPI (web)
-        pass
-
-# CLI continues to work unchanged
-if __name__ == "__main__":
-    args = parse_cli_args()
-    request = RankingsRequest.from_cli_args(args)
-    controller = ProjectionsController()
-    response = controller.get_rankings(request)
-    print_cli_results(response)
-
-# Web API uses same controller
-@app.get("/api/rankings")  
-async def get_rankings(
-    league: str,
-    season: str,
-    positions: Optional[str] = None,
-    limit: Optional[int] = None,
-    average: bool = False,
-    include: Optional[str] = None,
-    exclude: Optional[str] = None
-) -> RankingsResponse:
-    request = RankingsRequest(
-        league=league, season=season, positions=positions,
-        limit=limit, average=average, include=include, exclude=exclude
-    )
-    controller = ProjectionsController()
-    return controller.get_rankings(request)
-```
-
-**Phase 2: Enhanced Web Features**
-- File upload endpoints: `POST /api/files/upload`
-- Draft session management: `POST /api/drafts`, `GET /api/drafts/{id}`
-- Player status updates: `PATCH /api/drafts/{id}/players/{player_id}`
-
-### User Migration Path
-
-**Existing CLI Users:**
-1. **No disruption**: CLI continues working exactly as before
-2. **Gradual adoption**: Users can try web interface while keeping CLI workflow
-3. **Data consistency**: Same data sources and business logic ensure identical results
-
-**CLI Power Users Benefits:**
-- Web interface for visual draft boards and real-time collaboration
-- File upload instead of manual file placement
-- Cross-device access (mobile during drafts)
-- Saved preferences and draft session persistence
-
-**Migration Timeline:**
-- **Week 1-2**: API endpoints match all CLI functionality
-- **Week 3-4**: Web interface provides equivalent user experience
-- **Week 5-8**: Enhanced web-only features (file upload, draft management)
-- **Ongoing**: CLI and web interfaces maintained in parallel
 
 ## Real-Time Updates Strategy
 

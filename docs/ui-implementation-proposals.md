@@ -4,7 +4,7 @@ This document outlines different approaches to implement a user interface for th
 
 ## Executive Summary
 
-After analyzing the current codebase structure, the fantasy projections service has a well-architected layered design (CLI → Controller → Service → DAO) that makes it suitable for various UI integration approaches. The current implementation processes Excel files from multiple fantasy analysts and provides ranking comparisons with optional weighted averaging.
+After analyzing the current codebase structure, the fantasy projections service has a well-architected layered design (API → Controller → Service → DAO) that makes it suitable for various UI integration approaches. The current implementation processes Excel files from multiple fantasy analysts and provides ranking comparisons with optional weighted averaging.
 
 **Key Requirements:**
 - ✅ Responsive web browser access (desktop, tablet, mobile browsers)
