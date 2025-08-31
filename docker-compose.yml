@@ -79,14 +79,17 @@ services:
       API_URL: http://api:8000
       NODE_ENV: development
     depends_on:
-      api:
-        condition: service_healthy
+      - api
     volumes:
-      - ./fantasy-projections-web/src:/app/src
-      - ./fantasy-projections-web/public:/app/public
-      - ./fantasy-projections-web/package.json:/app/package.json
-    # Override for development with hot reload
-    command: ["sh", "-c", "npm install && npm run dev"]
+      - ./fantasy-projections-web:/app
+      - /app/node_modules
+      - /app/.next
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
     networks:
       - fantasy-network
 
