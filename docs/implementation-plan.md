@@ -27,7 +27,7 @@ This document outlines a step-by-step plan for building the Fantasy Hockey Draft
 
 ### Frontend Development
 - ✅ **Iteration 1**: Project Setup & Foundation - **COMPLETED** 
-- 🔄 **Iteration 1.5**: Authentication & User Management - **PENDING**
+- ✅ **Iteration 1.5**: Authentication & User Management - **COMPLETED**
 - 🔄 **Iteration 2**: Core UI Components & Data Display - **PENDING**
 - 🔄 **Iteration 3**: File Upload Interface - **PENDING**
 - 🔄 **Iteration 4**: Draft Status Management - **PENDING**

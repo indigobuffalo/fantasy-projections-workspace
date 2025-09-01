@@ -61,6 +61,8 @@ The Python application follows a layered architecture:
 
 #### Key Components
 - **FastAPI Application**: REST API server with OpenAPI documentation
+- **Authentication System**: JWT-based user authentication with registration, login, and password management
+- **User Management**: Complete user lifecycle including account creation and deletion endpoints
 - **ProjectionsController**: Main orchestrator handling API requests
 - **ProjectionsSvc**: Core business logic for cross-source projection comparison  
 - **Reader Classes**: Specialized parsers in `dao/reader/` for different analysts (Blake, Dom, EP, Laidlaw, etc.)
@@ -110,6 +112,41 @@ Enable with `include_average=true` parameter: `GET /api/rankings/kkupfl/2024-202
 - Smooths out individual analyst biases and outliers
 - Only includes players found in multiple sources
 
+## User Account Management
+
+The API provides comprehensive user account deletion capabilities for both user-initiated and administrative deletion:
+
+### User Deletion Endpoints
+
+#### Self-Service Deletion
+`DELETE /api/auth/delete-account`
+- **Authentication Required**: User must be logged in with valid JWT token
+- **Scope**: User can only delete their own account
+- **Data Removed**: All user data and associations (see Data Deletion Scope below)
+
+#### Administrative Deletion  
+`DELETE /api/auth/admin/delete-user/{user_id}`
+- **Authentication Required**: None (intended for direct backend access)
+- **Scope**: Can delete any user by UUID
+- **Data Removed**: All user data and associations (see Data Deletion Scope below)
+- **Validation**: Validates UUID format and provides proper error responses
+
+### Data Deletion Scope
+Both endpoints permanently remove:
+- User profile and authentication data (password, tokens, etc.)
+- All draft sessions created by the user 
+- All projection sources, consolidated rankings, and draft picks associated with user's sessions
+- All sleeper lists and target players
+- User analytics events (for privacy compliance)
+
+**Note**: All deletions use CASCADE constraints and transactions with proper rollback on errors. This operation is irreversible.
+
+### Implementation
+- **Database Layer**: `user_queries.py:delete_user_and_data()` - Handles comprehensive data removal
+- **API Models**: `UserDeletionResponse` - Structured response with success status and metadata
+- **Error Handling**: Proper HTTP status codes, transaction rollback, and detailed error messages
+- **Testing**: Comprehensive test coverage for both endpoints and database operations
+
 ## Comprehensive Documentation
 
 ### Architecture Overview
@@ -128,6 +165,11 @@ Write modular code that promotes:
 - **Extensibility**: Easy to add new features, data sources, and functionality
 - **Composability**: Components that work together seamlessly and can be combined in different ways
 
+### Git Workflow
+- **Commit in logical chunks**: Make frequent, focused commits that represent complete, working units of change
+- Each commit should be atomic and represent a single logical change
+- Use descriptive commit messages that explain the "why" behind changes
+
 ## Project Evolution
 Changes are tracked in `fantasy-projections-api/CHANGELOG.md`, updated before merging pull requests to document all integrated changes.
 
@@ -137,3 +179,10 @@ Changes are tracked in `fantasy-projections-api/CHANGELOG.md`, updated before me
 - `fantasy-projections-web/docs/implementation-plan.md` - Frontend progress and completed iterations
 
 Mark completed tasks as `[x]` and update progress status indicators (`✅ COMPLETED`, `🟡 IN PROGRESS`, `🔄 PENDING`) to maintain accurate project tracking.
+
+**Architecture Documentation Maintenance**: After any meaningful architectural changes, update the corresponding architecture documentation to maintain accurate system understanding:
+- `docs/architecture.md` - Update after changes affecting the overall system architecture
+- `fantasy-projections-api/docs/architecture.md` - Update after changes to backend architecture, data flow, or API structure
+- `fantasy-projections-web/docs/architecture.md` - Update after changes to frontend architecture, components, or user interface patterns
+
+This ensures accurate architectural documentation for the entire application as well as its individual backend and frontend components.
