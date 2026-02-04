@@ -112,9 +112,11 @@ Enable with `--average` flag: `python cli.py kkupfl 2024-2025 --average --limit 
 ## Comprehensive Documentation
 
 ### Architecture Overview
-- **Wholistic System Architecture**: `docs/architecture.md` - Complete system architecture for both frontend and backend, including database design, security implementation, and performance optimizations
-- **Frontend Architecture**: `fantasy-projections-web/docs/architecture.md` - Next.js application architecture, components, and user interface design
-- **Backend Architecture**: `fantasy-projections-api/docs/architecture.md` - Python FastAPI backend, data processing, and API endpoints
+**⚠️ IMPORTANT**: The architecture documentation listed below is outdated and should only be used for historical reference. The current application implementation may differ significantly from these documented designs.
+
+- **Wholistic System Architecture**: `docs/architecture.md` - Complete system architecture for both frontend and backend, including database design, security implementation, and performance optimizations *(Historical reference only)*
+- **Frontend Architecture**: `fantasy-projections-web/docs/architecture.md` - Next.js application architecture, components, and user interface design *(Historical reference only)*
+- **Backend Architecture**: `fantasy-projections-api/docs/architecture.md` - Python FastAPI backend, data processing, and API endpoints *(Historical reference only)*
 
 ### User Experience
 - **User Specification**: `docs/fantasy-draft-assistant-user-specification.md` - Complete user experience, workflows, and feature requirements for both web and CLI interfaces
